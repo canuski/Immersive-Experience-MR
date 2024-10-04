@@ -146,7 +146,7 @@ public class VideoLoopManager : MonoBehaviour
     public void StartFloorTwoSequence()
     {
         floorTwoSelected = true;
-
+        buttonsPanel.SetActive(false);
         // Deactivate the looped video and start the Floor 2 sequence
         videoStandLooped.Stop();
         videoStandLoopedObject.SetActive(false);
