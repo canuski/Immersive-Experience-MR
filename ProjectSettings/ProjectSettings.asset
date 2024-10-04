@@ -167,6 +167,7 @@ PlayerSettings:
   androidMinAspectRatio: 1
   applicationIdentifier:
     Android: com.DefaultCompany.ImmersiveExperienceProject1
+    Standalone: com.DefaultCompany.Immersive-Experience-Project-1
   buildNumber:
     Standalone: 0
     VisionOS: 0
