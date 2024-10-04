@@ -9,13 +9,20 @@ public class VideoLoopManager : MonoBehaviour
     public VideoPlayer videoStandLooped;    // Third video: standing in the elevator (looped)
     public VideoPlayer videoFadeOut;        // Final video: fade out (end)
 
+    // New videos for the sequence after the fade-out
+    public VideoPlayer videoExtraOne;    // First video after fade-out
+    public VideoPlayer videoExtraTwo;    // Second video after fade-out
+
     // GameObjects for controlling visibility
     public GameObject videoEnterOnePlayObject;  // GameObject for Video-Enter-OnePlay
     public GameObject videoFadeIntoElevatorObject;  // GameObject for Fade into elevator video
     public GameObject videoStandLoopedObject;   // GameObject for standing looped video
     public GameObject videoFadeOutObject;       // GameObject for Fade-out video
+    public GameObject videoExtraOneObject;      // GameObject for the first extra video
+    public GameObject videoExtraTwoObject;      // GameObject for the second extra video
 
     private bool videoEndCalled = false;  // To track if the ending sequence is called
+    private bool inExtraSequence = false; // To track if we are in the extra video sequence
 
     void Start()
     {
@@ -24,6 +31,8 @@ public class VideoLoopManager : MonoBehaviour
         videoFadeIntoElevator.loopPointReached += OnFadeIntoElevatorFinished;
         videoStandLooped.loopPointReached += OnLoopVideoReached;  // Will keep playing because of looping
         videoFadeOut.loopPointReached += OnFadeOutFinished;
+        videoExtraOne.loopPointReached += OnExtraOneFinished;
+        videoExtraTwo.loopPointReached += OnExtraTwoFinished;
     }
 
     // First video finished (Entering the elevator)
@@ -71,20 +80,62 @@ public class VideoLoopManager : MonoBehaviour
         videoFadeOut.Play();
     }
 
+    // Final video (Fade-out) finished
+    void OnFadeOutFinished(VideoPlayer vp)
+    {
+        // Deactivate fade-out GameObject
+        videoFadeOutObject.SetActive(false);
+
+        // Start the extra sequence
+        StartExtraSequence();
+    }
+
+    // Start playing extra sequence (two videos in a row)
+    void StartExtraSequence()
+    {
+        inExtraSequence = true;
+
+        // Play the first extra video
+        videoExtraOneObject.SetActive(true);
+        videoExtraOne.Play();
+    }
+
+    // First extra video finished
+    void OnExtraOneFinished(VideoPlayer vp)
+    {
+        // Deactivate first extra video
+        videoExtraOneObject.SetActive(false);
+
+        // Play the second extra video
+        videoExtraTwoObject.SetActive(true);
+        videoExtraTwo.Play();
+    }
+
+    // Second extra video finished
+    void OnExtraTwoFinished(VideoPlayer vp)
+    {
+        // Deactivate second extra video
+        videoExtraTwoObject.SetActive(false);
+
+        // Return to the looped video sequence
+        RestartLoopedSequence();
+    }
+
+    // Return to the looped fade-in/fade-out sequence
+    void RestartLoopedSequence()
+    {
+        inExtraSequence = false;
+
+        // Activate Fade-into-elevator video (like resetting the sequence)
+        videoFadeIntoElevatorObject.SetActive(true);
+        videoFadeIntoElevator.Play();
+    }
+
     public void StartSequence()
     {
         // Start the first video sequence
         videoEnterOnePlayObject.SetActive(true);
         videoEnterOnePlay.Play();
-    }
-
-
-    // Final video (Fade-out) finished
-    void OnFadeOutFinished(VideoPlayer vp)
-    {
-        // Do any cleanup or further actions needed after the final fade-out
-        videoFadeOutObject.SetActive(false);
-        Debug.Log("Elevator sequence completed.");
     }
 
     // Optional method to clean up the event subscriptions when the object is destroyed
@@ -94,5 +145,7 @@ public class VideoLoopManager : MonoBehaviour
         videoFadeIntoElevator.loopPointReached -= OnFadeIntoElevatorFinished;
         videoStandLooped.loopPointReached -= OnLoopVideoReached;
         videoFadeOut.loopPointReached -= OnFadeOutFinished;
+        videoExtraOne.loopPointReached -= OnExtraOneFinished;
+        videoExtraTwo.loopPointReached -= OnExtraTwoFinished;
     }
 }
