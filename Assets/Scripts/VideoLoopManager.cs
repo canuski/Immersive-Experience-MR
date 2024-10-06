@@ -181,7 +181,6 @@ public class VideoLoopManager : MonoBehaviour
         // Reset the sequence by returning to the standing-in-elevator loop
         videoFadeIntoElevatorObject.SetActive(true);
         videoFadeIntoElevator.Play();
-
         buttonsPanel.SetActive(true);
     }
 
